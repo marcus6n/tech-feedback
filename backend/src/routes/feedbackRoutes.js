@@ -33,11 +33,17 @@ const validateFeedback = (req, res, next) => {
 };
 
 router.post("/", authMiddleware, validateFeedback, async (req, res) => {
+  console.log("Rota POST /api/feedback acessada");
+  console.log("Headers:", req.headers);
+  console.log("Body:", req.body);
+  console.log("User:", req.user);
+  
   const { receiverId, message, type, isAnonymous } = req.body;
   
   try {
     // Prevent self-feedback
     if (req.user.id === receiverId) {
+      console.log("Erro: Tentativa de enviar feedback para si mesmo");
       return res.status(400).json({ 
         error: "Cannot send feedback to yourself" 
       });
