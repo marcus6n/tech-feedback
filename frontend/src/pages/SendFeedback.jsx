@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContextDef";
-import axios from "axios";
+import api, { setAuthToken } from "../services/api";
 
 const SendFeedback = () => {
   const { user, getAccessToken } = useContext(AuthContext);
@@ -30,12 +30,9 @@ const SendFeedback = () => {
         setError("No access token available");
         return;
       }
-
-      await axios.post(
-        "http://localhost:5000/api/feedback",
-        { receiverId, message, type, isAnonymous },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      
+      setAuthToken(token);
+      await api.post("/api/feedback", { receiverId, message, type, isAnonymous });
       
       setSuccess(true);
       setMessage("");

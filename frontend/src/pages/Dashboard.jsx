@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContextDef";
-import axios from "axios";
+import api, { setAuthToken } from "../services/api";
 
 const Dashboard = () => {
   const { user, getAccessToken } = useContext(AuthContext);
@@ -17,13 +17,9 @@ const Dashboard = () => {
           setError("No access token available");
           return;
         }
-
-        const { data } = await axios.get(
-          "http://localhost:5000/api/feedback/my-feedbacks",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        
+        setAuthToken(token);
+        const { data } = await api.get("/api/feedback/my-feedbacks");
         setFeedbacks(data);
       } catch (error) {
         setError(error.response?.data?.error || "Failed to fetch feedbacks");
