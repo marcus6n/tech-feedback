@@ -7,9 +7,42 @@ const {
 } = require("../services/feedbackService");
 const authMiddleware = require("../middleware/auth");
 
-router.post("/", authMiddleware, async (req, res) => {
+// Validation middleware
+const validateFeedback = (req, res, next) => {
   const { receiverId, message, type, isAnonymous } = req.body;
+  
+  if (!receiverId || !message || !type) {
+    return res.status(400).json({ 
+      error: "Missing required fields: receiverId, message, type" 
+    });
+  }
+  
+  if (!["positive", "constructive"].includes(type)) {
+    return res.status(400).json({ 
+      error: "Type must be 'positive' or 'constructive'" 
+    });
+  }
+  
+  if (typeof isAnonymous !== "boolean") {
+    return res.status(400).json({ 
+      error: "isAnonymous must be a boolean" 
+    });
+  }
+  
+  next();
+};
+
+router.post("/", authMiddleware, validateFeedback, async (req, res) => {
+  const { receiverId, message, type, isAnonymous } = req.body;
+  
   try {
+    // Prevent self-feedback
+    if (req.user.id === receiverId) {
+      return res.status(400).json({ 
+        error: "Cannot send feedback to yourself" 
+      });
+    }
+    
     const feedback = await createFeedback(
       req.user.id,
       receiverId,
@@ -19,6 +52,7 @@ router.post("/", authMiddleware, async (req, res) => {
     );
     res.status(201).json(feedback);
   } catch (error) {
+    console.error("Feedback creation error:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -28,17 +62,22 @@ router.get("/my-feedbacks", authMiddleware, async (req, res) => {
     const feedbacks = await getUserFeedbacks(req.user.id);
     res.json(feedbacks);
   } catch (error) {
+    console.error("Get feedbacks error:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 router.get("/metrics", authMiddleware, async (req, res) => {
-  if (req.user.role !== "admin")
-    return res.status(403).json({ error: "Admin only" });
+  // Check if user has admin role (you might need to adjust this based on your user structure)
+  if (!req.user.user_metadata?.role || req.user.user_metadata.role !== "admin") {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+  
   try {
     const metrics = await getFeedbackMetrics();
     res.json(metrics);
   } catch (error) {
+    console.error("Get metrics error:", error);
     res.status(500).json({ error: error.message });
   }
 });

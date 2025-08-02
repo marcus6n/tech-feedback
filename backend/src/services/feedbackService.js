@@ -16,17 +16,22 @@ const createFeedback = async (
         message,
         type,
         is_anonymous: isAnonymous,
+        created_at: new Date().toISOString(),
       },
-    ]);
+    ])
+    .select();
+    
   if (error) throw new Error(error.message);
-  return data;
+  return data[0];
 };
 
 const getUserFeedbacks = async (userId) => {
   const { data, error } = await supabase
     .from("feedbacks")
     .select("*")
-    .eq("receiver_id", userId);
+    .eq("receiver_id", userId)
+    .order("created_at", { ascending: false });
+    
   if (error) throw new Error(error.message);
   return data;
 };
@@ -34,8 +39,10 @@ const getUserFeedbacks = async (userId) => {
 const getFeedbackMetrics = async () => {
   const { data, error } = await supabase
     .from("feedbacks")
-    .select("type, is_anonymous", { count: "exact" });
+    .select("type, is_anonymous");
+    
   if (error) throw new Error(error.message);
+  
   return {
     total: data.length,
     positive: data.filter((f) => f.type === "positive").length,
