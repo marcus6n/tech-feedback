@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
 export const AuthContext = createContext({
   user: null,
@@ -8,4 +8,4 @@ export const AuthContext = createContext({
   register: () => {},
   logout: () => {},
   getAccessToken: () => {},
-}); 
+});

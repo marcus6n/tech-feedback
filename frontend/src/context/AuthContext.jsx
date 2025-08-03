@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import supabase from '../services/supabase';
-import { AuthContext } from './AuthContextDef';
+import { useState, useEffect } from "react";
+import supabase from "../services/supabase";
+import { AuthContext } from "./AuthContextDef";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -16,7 +16,9 @@ export const AuthProvider = ({ children }) => {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -26,7 +28,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) throw error;
   };
 
@@ -46,7 +51,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, login, register, logout, getAccessToken }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        loading,
+        login,
+        register,
+        logout,
+        getAccessToken,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
