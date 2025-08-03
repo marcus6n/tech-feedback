@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createFeedback,
   getUserFeedbacks,
+  getAllFeedbacks,
   getFeedbackMetrics,
 } = require("../services/feedbackService");
 const authMiddleware = require("../middleware/auth");
@@ -33,17 +34,11 @@ const validateFeedback = (req, res, next) => {
 };
 
 router.post("/", authMiddleware, validateFeedback, async (req, res) => {
-  console.log("Rota POST /api/feedback acessada");
-  console.log("Headers:", req.headers);
-  console.log("Body:", req.body);
-  console.log("User:", req.user);
-  
   const { receiverId, message, type, isAnonymous } = req.body;
   
   try {
     // Prevent self-feedback
     if (req.user.id === receiverId) {
-      console.log("Erro: Tentativa de enviar feedback para si mesmo");
       return res.status(400).json({ 
         error: "Cannot send feedback to yourself" 
       });
@@ -58,7 +53,6 @@ router.post("/", authMiddleware, validateFeedback, async (req, res) => {
     );
     res.status(201).json(feedback);
   } catch (error) {
-    console.error("Feedback creation error:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -68,7 +62,20 @@ router.get("/my-feedbacks", authMiddleware, async (req, res) => {
     const feedbacks = await getUserFeedbacks(req.user.id);
     res.json(feedbacks);
   } catch (error) {
-    console.error("Get feedbacks error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/all-feedbacks", authMiddleware, async (req, res) => {
+  // Check if user has admin role
+  if (!req.user.user_metadata?.role || req.user.user_metadata.role !== "admin") {
+    return res.status(403).json({ error: "Admin access required" });
+  }
+  
+  try {
+    const feedbacks = await getAllFeedbacks();
+    res.json(feedbacks);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
@@ -83,7 +90,6 @@ router.get("/metrics", authMiddleware, async (req, res) => {
     const metrics = await getFeedbackMetrics();
     res.json(metrics);
   } catch (error) {
-    console.error("Get metrics error:", error);
     res.status(500).json({ error: error.message });
   }
 });

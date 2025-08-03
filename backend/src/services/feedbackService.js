@@ -36,6 +36,16 @@ const getUserFeedbacks = async (userId) => {
   return data;
 };
 
+const getAllFeedbacks = async () => {
+  const { data, error } = await supabase
+    .from("feedbacks")
+    .select("*")
+    .order("created_at", { ascending: false });
+    
+  if (error) throw new Error(error.message);
+  return data;
+};
+
 const getFeedbackMetrics = async () => {
   const { data, error } = await supabase
     .from("feedbacks")
@@ -51,4 +61,4 @@ const getFeedbackMetrics = async () => {
   };
 };
 
-module.exports = { createFeedback, getUserFeedbacks, getFeedbackMetrics };
+module.exports = { createFeedback, getUserFeedbacks, getAllFeedbacks, getFeedbackMetrics };
