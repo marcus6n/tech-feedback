@@ -3,7 +3,7 @@ import { AuthContext } from "../context/AuthContextDef";
 import api, { setAuthToken } from "../services/api";
 
 const SendFeedback = () => {
-  const { user, getAccessToken } = useContext(AuthContext);
+  const { getAccessToken } = useContext(AuthContext);
   const [receiverId, setReceiverId] = useState("");
   const [message, setMessage] = useState("");
   const [type, setType] = useState("positive");
@@ -56,11 +56,6 @@ const SendFeedback = () => {
           {/* Header */}
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center shadow-soft">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              </div>
               <div>
                 <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
                   Send Feedback
