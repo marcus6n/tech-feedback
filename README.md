@@ -101,7 +101,8 @@ tech-feedback/
    Create a `.env` file in the backend directory:
    ```env
    SUPABASE_URL=your_supabase_project_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_KEY=your-supabase-api-key
+   SUPABASE_SERVICE_ROLE_KEY=your-supabase-api-role-key
    PORT=3000
    ```
 
