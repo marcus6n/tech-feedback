@@ -64,7 +64,7 @@ const Navigation = () => {
             >
               Send Feedback
             </Link>
-            {user.role === "admin" && (
+            {user.user_metadata?.role === "admin" && (
               <Link 
                 to="/admin" 
                 className={`px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
@@ -93,7 +93,7 @@ const Navigation = () => {
                     {user.email}
                   </p>
                   <p className="text-xs text-gray-500 capitalize">
-                    {user.role}
+                    {user.user_metadata?.role || 'user'}
                   </p>
                 </div>
               </div>
@@ -152,7 +152,7 @@ const Navigation = () => {
               >
                 Send Feedback
               </Link>
-              {user.role === "admin" && (
+              {user.user_metadata?.role === "admin" && (
                 <Link 
                   to="/admin" 
                   className={`block px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
@@ -179,7 +179,7 @@ const Navigation = () => {
                       {user.email}
                     </p>
                     <p className="text-xs text-gray-500 capitalize">
-                      {user.role}
+                      {user.user_metadata?.role || 'user'}
                     </p>
                   </div>
                 </div>
