@@ -18,4 +18,12 @@ app.get("/api/test", (req, res) => {
 // Rotas de feedback
 app.use("/api/feedback", feedbackRoutes);
 
-app.listen(PORT);
+// Para desenvolvimento local
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+// Para Vercel
+module.exports = app;
